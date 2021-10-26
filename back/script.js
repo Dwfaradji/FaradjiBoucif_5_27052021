@@ -1,4 +1,4 @@
-async function chargementDonnee() {
+async function chargementDonneePageAcceuil() {
   try {
     // appel de l'Api
     const response = await fetch("http://localhost:3000/api/products");
@@ -39,9 +39,9 @@ async function chargementDonnee() {
     }
 
     // Boucle Ajout des bloc article
-    arrayProduct.forEach((product) => {
-      addBloc_article(product);
+    arrayProduct.forEach((produit) => {
+      addBloc_article(produit);
     });
   } catch (e) {}
 }
-chargementDonnee();
+chargementDonneePageAcceuil();
