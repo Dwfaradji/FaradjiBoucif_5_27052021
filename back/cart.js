@@ -123,10 +123,10 @@ async function page_Cart() {
     });
 
     //------------utilisation de la methode reduce ------------------
-    const reduceur = (accumulateur, currentValue) =>
+    const reduceurPrix = (accumulateur, currentValue) =>
       accumulateur + currentValue;
 
-    const prixTotalPanier = prixTotalProduits.reduce(reduceur, 0);
+    const prixTotalPanier = prixTotalProduits.reduce(reduceurPrix, 0);
     console.log(prixTotalProduits);
 
     const affPrixTotal = document.querySelector("#totalPrice");
@@ -140,8 +140,8 @@ async function page_Cart() {
       totalArticle.push(totalQuantite);
     });
 
-    const reducteur = (nom, valeur) => nom + valeur;
-    const calculeArticle = totalArticle.reduce(reducteur, 0);
+    const reduceurArticle = (nom, valeur) => nom + valeur;
+    const calculeArticle = totalArticle.reduce(reduceurArticle, 0);
 
     const affTotalArticles = document.querySelector("#totalQuantity");
     affTotalArticles.innerHTML = calculeArticle;
@@ -158,9 +158,10 @@ async function page_Cart() {
 
     //------------------Formulaire------------
     const btn_commander = document.getElementById("order");
+
     btn_commander.addEventListener("click", (e) => {
       e.preventDefault();
-      window.location.href = "/front/html/confirmation.html";
+      //********************SELECTIONNE LES VALEUR DU FORMULAIRE *******/
       const selectForm = {
         firstname: document.getElementById("firstName").value,
         lastName: document.getElementById("lastName").value,
@@ -169,42 +170,95 @@ async function page_Cart() {
         email: document.getElementById("email").value,
       };
       console.log(selectForm);
+      // //*******************--SELECTIONNE LE MESAAGE D'ERREUR--****************/
+      // const messageErreur = {
+      //   firstNameErrorMsg: document.getElementById("firstNameErrorMsg"),
+      //   lastNameErrorMsg: document.getElementById("lastNameErrorMsg"),
+      //   addressErrorMsg: document.getElementById("addressErrorMsg"),
+      //   cityErrorMsg: document.getElementById("cityErrorMsg"),
+      //   emailErrorMsg: document.getElementById("emailErrorMsg"),
+      // };
+      // console.log(messageErreur);
+
+      //---------REGEX---------
+      let myRegex_letter = /^[a-zA-Z-\s]{3,20}$/;
+      let myRegex_letter_number = /^[a-zA-Z0-9\s]+$/;
+      let myRegex_number = /^[0-9]+$/;
+      let myRegex_email =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      //---------------Prénon Formulaire------------------
+
+      if (selectForm.firstname == "") {
+        let myError = document.getElementById("firstNameErrorMsg");
+        myError.innerHTML = "ceci est un message d'erreur";
+        console.log("ceci est un message d'erreur");
+      } else if (myRegex_letter.test(selectForm.firstname) == false) {
+        let myError = document.getElementById("firstNameErrorMsg");
+        myError.innerHTML = "le nom doit comporter des lettres uniquements";
+        console.log("le prénon doit comporter des lettres uniquements");
+      }
+
+      //-----------------NOM formulaire--------------------
+      else if (selectForm.lastName == "") {
+        let myError = document.getElementById("lastNameErrorMsg");
+        myError.innerHTML = "ceci est un message d'erreur";
+        console.log("ceci est un message d'erreur");
+      } else if (myRegex_letter.test(selectForm.lastName) == false) {
+        let myError = document.getElementById("lastNameErrorMsg");
+        myError.innerHTML = "le nom doit comporter des lettres uniquements";
+      }
+
+      //------------adresse formulaire
+      else if (selectForm.address == "") {
+        let myError = document.getElementById("addressErrorMsg");
+        myError.innerHTML = "ceci est un message d'erreur";
+        console.log("ceci est un message d'erreur");
+      } else if (myRegex_letter_number.test(selectForm.address) == false) {
+        let myError = document.getElementById("addressErrorMsg");
+        myError.innerHTML = "veuillez indiquer une adresse correct";
+      }
+
+      //------------Ville formulaire-------------
+      else if (selectForm.city == "") {
+        let myError = document.getElementById("cityErrorMsg");
+        myError.innerHTML = "ceci est un message d'erreur";
+        console.log("ceci est un message d'erreur");
+      } else if (myRegex_number.test(selectForm.city) == false) {
+        let myError = document.getElementById("cityErrorMsg");
+        myError.innerHTML = "la ville doit comporter des chiffres uniquements";
+      }
+
+      //------------Email Formulaire------------
+      else if (selectForm.email == "") {
+        let myError = document.getElementById("emailErrorMsg");
+        myError.innerHTML = "ceci est un message d'erreur";
+        console.log("ceci est un message d'erreur");
+      } else if (myRegex_email.test(selectForm.email) == false) {
+        let myError = document.getElementById("emailErrorMsg");
+        myError.innerHTML = "Veuillez indiquer un email valide";
+      } else {
+        window.location.href = "/front/html/confirmation.html";
+        //---envoi les bonne information dans le local storage-----
+        const product = {
+          method: "POST",
+          body: JSON.stringify(selectForm),
+          headers: { "Content-Type": "application/json" },
+        };
+        console.log(product);
+      }
+
+      //**********---local Storage----***************** */
       let contactStockerLocalStorage = JSON.parse(
         localStorage.getItem("contact")
       );
       console.log(contactStockerLocalStorage);
-
-      if (contactStockerLocalStorage) {
-        contactStockerLocalStorage.push(selectForm);
-        localStorage.setItem(
-          "contact",
-          JSON.stringify(contactStockerLocalStorage)
-        );
-      } else {
-        contactStockerLocalStorage = [];
-        contactStockerLocalStorage.push(selectForm);
-        localStorage.setItem(
-          "contact",
-          JSON.stringify(contactStockerLocalStorage)
-        );
-      }
-
-      //------------- Page de confirmation---------
-      const response2 = fetch("http://localhost:3000/api/products", {
-        method: "POST",
-        body: JSON.stringify(selectForm),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      console.log(response2);
-      function commandtoOrder() {
-        fetch("http://localhost:3000/api/products/order", response2)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-          });
-      }
-      commandtoOrder();
+      contactStockerLocalStorage = [];
+      contactStockerLocalStorage.push(selectForm);
+      localStorage.setItem(
+        "contact",
+        JSON.stringify(contactStockerLocalStorage)
+      );
     });
   } catch (e) {}
 }

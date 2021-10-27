@@ -11,7 +11,7 @@ async function chargementProduit() {
     //Appel API grace a l'Id du produits
     const response = await fetch("http://localhost:3000/api/products/" + id);
 
-    //Reponse de l'Api
+    //Reponse de l'Api` ``
     let arrayProduct = await response.json();
     console.log(arrayProduct);
 
