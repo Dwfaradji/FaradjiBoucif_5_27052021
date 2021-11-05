@@ -4,7 +4,6 @@ async function page_Cart() {
     let produitStockerLocalStorage = JSON.parse(
       localStorage.getItem("produits")
     );
-    console.log(produitStockerLocalStorage);
 
     //***************************--Integration des blocs Html--***************************//
 
@@ -68,17 +67,15 @@ async function page_Cart() {
 
       for (let l = 0; l < deleteItem.length; l++) {
         deleteItem[l].addEventListener("click", (event) => {
-          // const deleteItem = document
-          //   .querySelector(".deleteItem")
-          //   .closest(".cart__item");
-          // const id = deleteItem.dataset.id;
-          // console.log(deleteItem);
-          // console.log(id);
+          const deleteItem = event.target.closest(".cart__item");
+          const id = deleteItem.dataset.id;
+          deleteItem.remove();
+          console.log(deleteItem);
+          console.log(id);
+          event.preventDefault();
 
           let idDelete = produitStockerLocalStorage[l].id_produit;
           let colorsDelete = produitStockerLocalStorage[l].couleurs;
-          console.log(colorsDelete);
-          console.log("localstorage ID= " + idDelete);
 
           const test2 = (produitStockerLocalStorage =
             produitStockerLocalStorage.filter(
@@ -89,41 +86,11 @@ async function page_Cart() {
             "produits",
             JSON.stringify(produitStockerLocalStorage)
           );
-          location.reload();
+          //Rechargement de la page pour actualiser la suppression
+          // location.reload();
+          affichePrixArticle();
         });
-
-        //Rechargement de la page pour actualiser la suppression
       }
-      //-----------------TEST-----------------------
-
-      // const deleteItem = document.querySelectorAll(".deleteItem");
-
-      // //Boucle qui va recuperer les information du produit a supprimer (Id et Couleurs)
-      // for (let l = 0; l < deleteItem.length; l++) {
-      //   deleteItem[l].addEventListener("click", (e) => {
-      //     e.preventDefault();
-
-      //     let idProduitSelectionner_supprimer =
-      //       produitStockerLocalStorage[l].id_produit;
-      //     let colorsDelete = produitStockerLocalStorage[l].couleurs;
-      //     console.log(idProduitSelectionner_supprimer);
-
-      //     //Utilisation de la methode filter pour supprimer un article
-
-      //     produitStockerLocalStorage = produitStockerLocalStorage.filter(
-      //       (el) =>
-      //         el.id_produit !== idProduitSelectionner_supprimer ||
-      //         el.couleurs !== colorsDelete
-      //     );
-
-      //     localStorage.setItem(
-      //       "produits",
-      //       JSON.stringify(produitStockerLocalStorage)
-      //     );
-      //     //Rechargement de la page pour actualiser la suppression
-      //     location.reload();
-      //   });
-      // }
     }
 
     btn_supprimer();
@@ -150,10 +117,8 @@ async function page_Cart() {
     }
     affichePrixArticle();
     //***************************--Modifier le nombre d'article dans le panier--***************************//
-    function modif_quantiter(params) {
+    function modif_quantiter() {
       const qtyModif = document.getElementsByClassName("itemQuantity");
-
-      console.log(qtyModif);
 
       for (let k = 0; k < qtyModif.length; k++) {
         //Boutton qui va modifier la quantité du produit
@@ -177,7 +142,7 @@ async function page_Cart() {
     //***************************--Formulaire--***************************//
     function formulaire() {
       const btn_commander = document.getElementById("order");
-      console.log(btn_commander);
+
       //Boutton qui va permettre d'envoyer le formulaire
 
       btn_commander.addEventListener("click", (e) => {
@@ -187,8 +152,8 @@ async function page_Cart() {
         produitStockerLocalStorage.forEach((produitCommander) => {
           productOrder.push(produitCommander.id_produit);
         });
-        console.log(productOrder);
-        //Selectionne les valeur du formulaire
+
+        //Selectionne le Dom du formulaire
 
         const firstName = document.getElementById("firstName");
         const lastName = document.getElementById("lastName");
@@ -196,6 +161,7 @@ async function page_Cart() {
         const city = document.getElementById("city");
         const email = document.getElementById("email");
 
+        // enregistre les informations de l'utilisateur ainsi que son panier
         let order = {
           contact: {
             firstName: firstName.value,
@@ -206,8 +172,7 @@ async function page_Cart() {
           },
           products: productOrder,
         };
-        console.log(order);
-
+        //affiche le message d'erreur
         const sendError = "Ceci est un message d'erreur";
         //---------Les REGEX---------//
 
@@ -217,19 +182,19 @@ async function page_Cart() {
         let myRegex_email =
           /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        //---------------Prénon du Formulaire------------------//
-
-        let messageOk = document.querySelectorAll(
+        //---Boucle qui va permettre d'enlever le message d'erreur--//
+        let infoFormOk = document.querySelectorAll(
           ".cart__order__form__question p"
-        ); //Condition qui va analyser si le formulaire et vide
+        );
 
-        messageOk.forEach((boucle) => {
+        infoFormOk.forEach((infoForm) => {
           if (order !== "") {
-            boucle.innerHTML = null;
-            console.log("Efface le message d'erreur");
+            infoForm.innerHTML = null;
           }
         });
+        //---------------Prénon du Formulaire------------------//
 
+        //Condition qui va analyser si le formulaire et vide
         if (firstName.value == "") {
           document.getElementById("firstNameErrorMsg").innerHTML = sendError;
 
@@ -283,27 +248,32 @@ async function page_Cart() {
             "Veuillez indiquer un email valide";
           //Si le formulaire est completer sans erreur
         } else {
-          //   Envoi les bonne information de l'utilisateur dans le local storage
-          //  window.location.href = "/front/html/confirmation.html";
-          const promise = fetch("http://localhost:3000/api/products/order", {
-            method: "POST",
-            body: JSON.stringify(order),
-            headers: { "Content-Type": "application/json" },
-          });
-          console.log(promise);
-          promise.then(async (response) => {
-            try {
-              console.log(response);
-              const contenu = await response.json();
-              console.log(contenu);
-            } catch (e) {
-              console.log(e);
-            }
-          });
+          // Envoi les bonnes informations de l'utilisateur et son panier a l'Api
+
+          async function post() {
+            const post = {
+              method: "POST",
+              body: JSON.stringify(order),
+              headers: { "Content-Type": "application/json" },
+            };
+
+            const response = await fetch(
+              "http://localhost:3000/api/products/order",
+              post
+            );
+            console.log(response);
+
+            //reponse de l'Api
+            let commandeId = await response.json();
+            console.log(commandeId);
+            document.location.href = "/front/html/confirmation.html";
+          }
+          post();
         }
       });
     }
     formulaire();
   } catch (e) {}
 }
+
 page_Cart();
