@@ -2,11 +2,13 @@ async function chargementProduit() {
   try {
     //Récuperation de la chaine de requete dans l'url
     const url_id = window.location.search;
+    console.log(url_id);
 
     //Extraction de l'Id
     const urlSearchParams = new URLSearchParams(url_id);
     console.log(urlSearchParams);
     const id = urlSearchParams.get("id");
+    console.log(id);
 
     //Appel API grace a l'Id du produits
     const response = await fetch(
