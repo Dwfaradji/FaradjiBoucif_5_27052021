@@ -1,3 +1,4 @@
+"use strict";
 const url_id = window.location.search;
 console.log(url_id);
 //Extraction de l'Id
