@@ -1,5 +1,4 @@
 "use strict";
-//debugger;
 //Construction html et integration des produits
 function displayProduct_home(product) {
   const selectId = document.getElementById("items");
@@ -28,31 +27,18 @@ async function loadingDataHomePage() {
     const response = await fetch("http://localhost:3000/api/products");
     console.log(response);
     //Reponse de l'Api
-
     const productsArray = await response.json();
     console.log(productsArray);
-
-    productsArray.forEach((product) => {
-      displayProduct_home(product);
-    });
-
-    // Ajout des bloc article
-
     return productsArray;
   } catch (e) {}
 }
-console.log(loadingDataHomePage());
-// const response =loadingDataHomePage().then( response =>response.json())
-// console.log(response);
+
 //Récupère les produit à afficher et va les intégrer dans le html
-// function addProducts() {
-
-//     const productsArray = loadingDataHomePage();
-
-//     productsArray.forEach((product) => {
-//       displayProduct_home(product);
-//     })
-
-// }
-// addProducts()
-//  console.log(addProducts());
+async function addProducts() {
+  const productsArray = await loadingDataHomePage();
+  productsArray.forEach((product) => {
+    displayProduct_home(product);
+  });
+  console.log(productsArray);
+}
+addProducts();

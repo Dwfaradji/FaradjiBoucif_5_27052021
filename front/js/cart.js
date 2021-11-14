@@ -3,6 +3,7 @@
 function getProductsInCart() {
   return JSON.parse(localStorage.getItem("produits"));
 }
+
 // integration du bloc html
 function displayProduct(integreElement) {
   const id_cart_items = document.getElementById("cart__items");
@@ -18,7 +19,6 @@ function displayProduct(integreElement) {
      alt= 
     "${integreElement.altTxt}"
     > </div> 
-   
     <div class=cart__item__content> 
     <div class=cart__item__content__titlePrice> 
     <h2> 
@@ -39,7 +39,6 @@ function displayProduct(integreElement) {
     ${integreElement.idProduit}
     > 
     </div> 
-   
     <div class=cart__item__content__settings__delete> 
     <p class=deleteItem>Supprimer</p> 
     </div> 
@@ -72,7 +71,6 @@ function affichePrixArticleAndNbProducts() {
   );
   //affiche le prix total de tout les articles
   document.querySelector("#totalPrice").innerHTML = totalPriceProducts;
-
   //----Calcul le nombre total des articles----//
   let totalItemProducts = produitStockerLocalStorage.reduce(
     (totalItems, items) => {
@@ -92,7 +90,6 @@ function displayProducts() {
   productsInCart = productsInCart.sort(function (a, b) {
     return a.name.localeCompare(b.name);
   });
-
   //integre le bloc html en fonction du nombre de produits stocker dans le local storage
   if (productsInCart != null) {
     productsInCart.forEach((integreElement) => {
@@ -103,19 +100,16 @@ function displayProducts() {
 displayProducts(); // c'est l'appel à cette fonction qui va tout déclencher
 
 affichePrixArticleAndNbProducts();
+
 //Supprime un produit
 function deleteItem(event) {
   event.preventDefault();
-
   // suppression de l'élément dans le dom
   const productToDelete = event.target.closest(".cart__item");
-
   const id = productToDelete.dataset.id;
   const productColors = productToDelete.dataset.color;
   productToDelete.remove();
-
   // suppression de l'élément dans le local storage : tableau filtré sans l'élément supprimé
-
   let productsInCart = getProductsInCart();
   productsInCart = productsInCart.filter(
     (product) => product.idProduit !== id || product.color !== productColors
@@ -125,6 +119,7 @@ function deleteItem(event) {
   // mise à jour du prix et du nb d'article
   affichePrixArticleAndNbProducts();
 }
+
 // Modifie la quantité
 function modif_quantiter(event) {
   event.preventDefault();
@@ -147,8 +142,6 @@ function modif_quantiter(event) {
   affichePrixArticleAndNbProducts();
 }
 
-//============********** terminer de refactoriser les lignes suivantes
-
 //***************************--Formulaire--***************************//
 //Selectionne l'input du Dom  formulaire
 function selectInput() {
@@ -162,9 +155,6 @@ function selectInput() {
   localStorage.setItem("contact", JSON.stringify(inputForm));
   console.log(inputForm);
 }
-
-//---------Les REGEX---------//
-// parametre necessaire pour la validation du formulaire
 
 //Efface le message d'erreur si les valeurs sont remplie
 function deleteSendError() {
@@ -182,7 +172,8 @@ function deleteSendError() {
 }
 function checkFormValidity() {
   deleteSendError();
-
+  //---------Les REGEX---------//
+  // parametre necessaire pour la validation du formulaire
   const myRegex_letter = /^[a-zA-Z-\s]{3,20}$/;
   const myRegex_adress = /^[a-zA-Z0-9\s]+$/;
   const myRegex_city = /^[0-9]+$/;
@@ -235,7 +226,6 @@ function checkFormValidity() {
     console.log(productIdUsers);
     if (productIdUsers.length != 0) {
       makeAndOrder();
-    
     } else {
       alert("Vous n'avez pas de produit dans votre panier");
     }
@@ -264,7 +254,6 @@ function productIdUsers() {
   let produitStockerLocalStorage = getProductsInCart();
   //variables qui stocker les id recuperer dans le local storage
   const productOrderId = [];
-
   //boucle qui va recuperer tous les id dans le local storage
   produitStockerLocalStorage.forEach((productOrder) => {
     productOrderId.push(productOrder.idProduit);
@@ -293,7 +282,6 @@ console.log(infoUser());
 //Listener qui va permettre d'envoyer le formulaire
 function listenerCart() {
   const btn_Order = document.getElementById("order");
-
   btn_Order.addEventListener("click", (e) => {
     e.preventDefault();
     checkFormValidity();
@@ -304,7 +292,6 @@ listenerCart();
 async function makeAndOrder() {
   //recupere les information saisi par l'utilisateur formulaire et son panier
   const order = infoUser();
-
   //envoi les donnée  recuperer par l'utilisateur a l'API
   const post = {
     method: "POST",
@@ -318,7 +305,6 @@ async function makeAndOrder() {
     post
   );
   console.log(response);
-
   //reponse de l'Api
   var commandeOrderId = await response.json();
   console.log(commandeOrderId);
