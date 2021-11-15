@@ -1,4 +1,9 @@
 "use strict";
+
+displayProducts(); // c'est l'appel à cette fonction qui va tout déclencher
+
+affichePrixArticleAndNbProducts();
+listenerCart();
 //Va chercher les éléments dans le local storage
 function getProductsInCart() {
   return JSON.parse(localStorage.getItem("produits"));
@@ -97,9 +102,6 @@ function displayProducts() {
     });
   }
 }
-displayProducts(); // c'est l'appel à cette fonction qui va tout déclencher
-
-affichePrixArticleAndNbProducts();
 
 //Supprime un produit
 function deleteItem(event) {
@@ -287,7 +289,7 @@ function listenerCart() {
     checkFormValidity();
   });
 }
-listenerCart();
+
 //Envoie les information a l'api et récupere l'id de la commande
 async function makeAndOrder() {
   //recupere les information saisi par l'utilisateur formulaire et son panier
@@ -308,7 +310,7 @@ async function makeAndOrder() {
   //reponse de l'Api
   var commandeOrderId = await response.json();
   console.log(commandeOrderId);
-  // confirmationOfOrder(commandeOrderId);
+  confirmationOfOrder(commandeOrderId);
 }
 //envoi la confirmation de la commande et son numero
 function confirmationOfOrder(commandeOrderId) {

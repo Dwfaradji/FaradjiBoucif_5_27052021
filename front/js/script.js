@@ -1,11 +1,13 @@
 "use strict";
+addProducts();
+
 //Construction html et integration des produits
 function displayProduct_home(product) {
-  const selectId = document.getElementById("items");
-  const addHref = document.createElement("a");
-  addHref.href = `product.html?id=${product._id}`;
-  selectId.appendChild(addHref);
-  addHref.innerHTML = `<article> 
+  const selectIdItem = document.getElementById("items");
+  const createHref = document.createElement("a");
+  createHref.href = `product.html?id=${product._id}`;
+  selectIdItem.appendChild(createHref);
+  createHref.innerHTML = `<article> 
     <img src= 
    "${product.imageUrl}"
      alt= 
@@ -41,4 +43,4 @@ async function addProducts() {
   });
   console.log(productsArray);
 }
-addProducts();
+

@@ -1,14 +1,19 @@
 "use strict";
+//Récuperation de la chaine de requete dans l'url
+const url_id = window.location.search;
+console.log(url_id);
+//Extraction de l'Id
+const urlSearchParams = new URLSearchParams(url_id);
+console.log(urlSearchParams);
+const idParams = urlSearchParams.get("id");
+const nombreArticle = document.getElementById("quantity");
+
+addProductsApi();
+btn_ajoutAuPanier();
+
 
 async function loadingProduct() {
   try {
-    //Récuperation de la chaine de requete dans l'url
-    const url_id = window.location.search;
-    console.log(url_id);
-    //Extraction de l'Id
-    const urlSearchParams = new URLSearchParams(url_id);
-    console.log(urlSearchParams);
-    const idParams = urlSearchParams.get("id");
     //Appel API grace a l'Id du produits
     const response = await fetch(
       `http://localhost:3000/api/products/${idParams}`
@@ -21,24 +26,13 @@ async function loadingProduct() {
   } catch (e) {}
 }
 
-async function addProducts() {
-  const arrayProduct0 = await loadingProduct();
-  console.log(arrayProduct0);
-  api_blockHtml(arrayProduct0);
-  addColorie(arrayProduct0);
-  usersChoice(arrayProduct0);
-  return arrayProduct0;
-}
-addProducts();
-
 // var arrayProduct = (async ()=> (await loadingProduct()))();
 // console.log(arrayProduct);
 // // const arrayProduct = loadingProduct()
 // // console.log(arrayProduct);
 
-const nombreArticle = document.getElementById("quantity");
-// integration des blocs Html et de leur valeur Api
 
+// integration des blocs Html et de leur valeur Api
 function api_blockHtml(arrayProduct) {
   const selectClassItem_img = document.querySelector(".item__img");
   selectClassItem_img.innerHTML = `<img src="${arrayProduct.imageUrl}" alt="${arrayProduct.altTxt}">`;
@@ -46,9 +40,16 @@ function api_blockHtml(arrayProduct) {
   document.querySelector("#price").innerHTML = arrayProduct.price;
   document.querySelector("#description").innerHTML = arrayProduct.description;
 }
+async function addProductsApi() {
+  const addProductApi = await loadingProduct();
+  console.log(addProductApi);
+  api_blockHtml(addProductApi);
+  addColorie(addProductApi);
+}
 
+//addProductsApi();
 //---------------couleurs Disponible ---------------------
-function addColorie(arrayProduct) {
+function addColorie(arrayProduct,) {
   const displaysColors = arrayProduct.colors;
   //boucles pour afficher les nombre de bloc par rapport au couleur disponible
   displaysColors.forEach((colorsProduct) => {
@@ -61,25 +62,27 @@ function addColorie(arrayProduct) {
 }
 
 //s'il y a des produits enregistre dans le local storage
-function usersChoice(arrayProduct) {
+function usersChoice() {
   const choixDeUtilisateur = {
-    name: arrayProduct.name,
-    image: arrayProduct.imageUrl,
-    altTxt: arrayProduct.altTxt,
-    price: arrayProduct.price,
-    idProduit: arrayProduct._id,
-    color: arrayProduct.value,
+    name: document.getElementById("title").innerHTML,
+    image: document.querySelector(".item__img img").getAttribute("src"),
+    altTxt: document.querySelector(".item__img img").getAttribute("alt"),
+    price: document.querySelector("#price").textContent,
+    idProduit: idParams,
+    color: document.querySelector("#colors").value,
     quantity: parseInt(nombreArticle.value),
   };
   console.log(choixDeUtilisateur);
   return choixDeUtilisateur;
 }
-console.log(usersChoice());
-
+ //--- JSON.parse c'est pour convertir les données au format JSON qui sont dans le local storage en objet JS
 function getProductLocalStorage() {
   return JSON.parse(localStorage.getItem("produits"));
 }
-function conditonPanierQuantity(params) {
+
+function conditonPanierQuantity() {
+  const choixDeUtilisateur = usersChoice();
+  let produitStockerLocalStorage = getProductLocalStorage();
   if (
     nombreArticle.value > 0 &&
     nombreArticle.value <= 100 &&
@@ -87,8 +90,7 @@ function conditonPanierQuantity(params) {
   ) {
     window.location.href = "cart.html";
     //------------------------LOCAL STORAGE---------------
-    //--- JSON.parse c'est pour convertir les données au format JSON qui sont dans le local storage en objet JS
-    let produitStockerLocalStorage = getProductLocalStorage();
+       
     if (produitStockerLocalStorage) {
       const productFind = produitStockerLocalStorage.find(
         (product) =>
@@ -129,4 +131,3 @@ function btn_ajoutAuPanier() {
     conditonPanierQuantity();
   });
 }
-btn_ajoutAuPanier();
