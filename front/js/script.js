@@ -1,10 +1,11 @@
 "use strict";
-const urlApi = "http://localhost:3000/api/";
 
+const urlApi = "http://localhost:3000/api/";
 const productsToLoad = await loadingProductApi();
+
 displayProductsHome();
 
-//Construction html et integration des produits
+//=== Construction html et integration des produits ===//
 function displayProductHome(product) {
   const selectIdItem = document.getElementById("items");
   const createHref = document.createElement("a");
@@ -17,13 +18,13 @@ function displayProductHome(product) {
     </article> 
     </a>`;
 }
-
+//=== Chargement des poduits de l'Api ===//
 async function loadingProductApi() {
   try {
-    // Appel de l'Api
+    //- Appel de l'Api
     const response = await fetch(`${urlApi}products`);
     console.log(response);
-    //Reponse de l'Api
+    //- Reponse de l'Api
     const promiseApi = await response.json();
     console.log(promiseApi);
     return promiseApi;
@@ -32,7 +33,7 @@ async function loadingProductApi() {
   }
 }
 
-//Récupère les produit à afficher et va les intégrer dans le html
+//=== Récupère les produits à afficher et va les intégrer dans le html ===//
 function displayProductsHome() {
   productsToLoad.forEach((product) => {
     displayProductHome(product);
