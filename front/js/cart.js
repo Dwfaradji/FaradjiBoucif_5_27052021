@@ -1,53 +1,36 @@
 "use strict";
+import { setProductLocalStorage } from "/front/js/fonction.js";
+import { getProductLocalStorage } from "/front/js/fonction.js";
 
 displayProducts(); // c'est l'appel à cette fonction qui va tout déclencher
-
-affichePrixArticleAndNbProducts();
-listenerCart();
-//Va chercher les éléments dans le local storage
-function getProductsInCart() {
-  return JSON.parse(localStorage.getItem("produits"));
-}
+displaysTotalPriceOfTheItems();
+displaysTotalArticle();
 
 // integration du bloc html
-function displayProduct(integreElement) {
-  const id_cart_items = document.getElementById("cart__items");
-  const article_items = document.createElement("article");
-  id_cart_items.appendChild(article_items);
-  article_items.classList.add("cart__item");
-  article_items.dataset.id = integreElement.idProduit;
-  article_items.dataset.color = integreElement.color;
-  // --------------------Class cart__item__img--------------------//
-  article_items.innerHTML = `<div class=cart__item__img> 
-    <img src= 
-    "${integreElement.image}"
-     alt= 
-    "${integreElement.altTxt}"
-    > </div> 
-    <div class=cart__item__content> 
-    <div class=cart__item__content__titlePrice> 
-    <h2> 
-    ${integreElement.name}
-    </h2>
-    <span><strong>${integreElement.color}</strong></span> 
-    <p> 
-    ${integreElement.price} 
-    € 
-    </p> 
+function displayProduct(integrateProduct) {
+  const selectedId = document.getElementById("cart__items");
+  const createArticle = document.createElement("article");
+  selectedId.appendChild(createArticle);
+  createArticle.classList.add("cart__item");
+  createArticle.dataset.id = integrateProduct.idProduit;
+  createArticle.dataset.color = integrateProduct.color;
+  createArticle.innerHTML = `<div class="cart__item__img"> 
+    <img src="${integrateProduct.image}"alt="${integrateProduct.altTxt}"> 
+    </div>   
+    <div class="cart__item__content"> 
+    <div class="cart__item__content__titlePrice"> 
+    <h2>${integrateProduct.name}</h2>
+    <span><strong>${integrateProduct.color}</strong></span> 
+    <p>${integrateProduct.price} € </p> 
     </div>
-    <div class=cart__item__content__settings> 
-    <div class=cart__item__content__settings__quantity> 
+    <div class="cart__item__content__settings"> 
+    <div class="cart__item__content__settings__quantity"> 
     <p>Qté : </p> 
-    <input type=number class=itemQuantity name=itemQuantity min=1 max=100 value= 
-    ${integreElement.quantity}
-     data-id= 
-    ${integreElement.idProduit}
-    > 
+    <input type="number" class="itemQuantity" name="itemQuantity" min=1 max=100 value= 
+    "${integrateProduct.quantity}" data-id="${integrateProduct.idProduit}"> 
     </div> 
-    <div class=cart__item__content__settings__delete> 
-    <p class=deleteItem>Supprimer</p> 
-    </div> 
-    </div> 
+    <div class="cart__item__content__settings__delete"> 
+    <p class="deleteItem">Supprimer</p> </div> 
     </div> 
     </article>`;
 
@@ -60,15 +43,14 @@ function displayProduct(integreElement) {
   // listeners modif quantité (on les met seulement apres construction de l'html)
   const quantityLinks = document.querySelectorAll(".itemQuantity");
   quantityLinks.forEach((quantityLink) => {
-    quantityLink.addEventListener("change", modif_quantiter);
+    quantityLink.addEventListener("change", changeTheQuantityOfTheProduct);
   });
 }
 
-// @todo decouper cette fonction en deux petites fonctions
-function affichePrixArticleAndNbProducts() {
-  let produitStockerLocalStorage = getProductsInCart();
+function displaysTotalPriceOfTheItems() {
+  let productsStoreInLocalStorage = getProductLocalStorage();
   //----Calcul le prix total de tout les articles ----//
-  let totalPriceProducts = produitStockerLocalStorage.reduce(
+  let totalPriceProducts = productsStoreInLocalStorage.reduce(
     (totalPrice, products) => {
       return totalPrice + products.quantity * products.price;
     },
@@ -76,8 +58,12 @@ function affichePrixArticleAndNbProducts() {
   );
   //affiche le prix total de tout les articles
   document.querySelector("#totalPrice").innerHTML = totalPriceProducts;
+}
+
+function displaysTotalArticle() {
+  let productsStoreInLocalStorage = getProductLocalStorage();
   //----Calcul le nombre total des articles----//
-  let totalItemProducts = produitStockerLocalStorage.reduce(
+  let totalItemProducts = productsStoreInLocalStorage.reduce(
     (totalItems, items) => {
       return totalItems + items.quantity;
     },
@@ -89,14 +75,12 @@ function affichePrixArticleAndNbProducts() {
 
 // Va afficher le bloc html
 function displayProducts() {
-  let productsInCart = getProductsInCart();
+  let productsInCart = getProductLocalStorage();
   console.log(productsInCart);
-  //Regroupe les produits en fonction de leur id
-  productsInCart = productsInCart.sort(function (a, b) {
-    return a.name.localeCompare(b.name);
-  });
-  //integre le bloc html en fonction du nombre de produits stocker dans le local storage
   if (productsInCart != null) {
+    productsInCart = productsInCart.sort(function (a, b) {
+      return a.name.localeCompare(b.name);
+    });
     productsInCart.forEach((integreElement) => {
       displayProduct(integreElement);
     });
@@ -108,56 +92,52 @@ function deleteItem(event) {
   event.preventDefault();
   // suppression de l'élément dans le dom
   const productToDelete = event.target.closest(".cart__item");
-  const id = productToDelete.dataset.id;
-  const productColors = productToDelete.dataset.color;
+  const idProductToDelete = productToDelete.dataset.id;
+  const colorProductTodelete = productToDelete.dataset.color;
   productToDelete.remove();
   // suppression de l'élément dans le local storage : tableau filtré sans l'élément supprimé
-  let productsInCart = getProductsInCart();
+  let productsInCart = getProductLocalStorage();
   productsInCart = productsInCart.filter(
-    (product) => product.idProduit !== id || product.color !== productColors
+    (productLocalStorage) =>
+      productLocalStorage.idProduit !== idProductToDelete ||
+      productLocalStorage.color !== colorProductTodelete
   );
   // sauvegarde dans le local storage
-  localStorage.setItem("produits", JSON.stringify(productsInCart));
+  setProductLocalStorage(productsInCart);
   // mise à jour du prix et du nb d'article
-  affichePrixArticleAndNbProducts();
+  displaysTotalPriceOfTheItems();
+  displaysTotalArticle();
 }
 
 // Modifie la quantité
-function modif_quantiter(event) {
+function changeTheQuantityOfTheProduct(event) {
   event.preventDefault();
   //recuperer l'id et la couleur du produit
-  const productToModif = event.target.closest(".cart__item");
-  console.log(productToModif);
-  const productToModif_id = productToModif.dataset.id;
-  const productToModif_color = productToModif.dataset.color;
+  const productToModifQuantity = event.target.closest(".cart__item");
+  console.log(productToModifQuantity);
+  const productToModifId = productToModifQuantity.dataset.id;
+  const productToModifColor = productToModifQuantity.dataset.color;
   //modifie la quantité dans le local storage
-  const productsInCart = getProductsInCart();
+  const productsInCart = getProductLocalStorage();
   const productTuUpdate = productsInCart.find(
     (product) =>
-      product.idProduit === productToModif_id &&
-      product.color === productToModif_color
+      product.idProduit === productToModifId &&
+      product.color === productToModifColor
   );
-  //sauvegarde dans le local storage
-  productTuUpdate.quantity = event.target.valueAsNumber;
-  localStorage.setItem("produits", JSON.stringify(productsInCart));
-  //mise a jour du prix et du nbre d'article
-  affichePrixArticleAndNbProducts();
+
+  const quantityMin = event.target.closest(".itemQuantity");
+  if (quantityMin.value < 1) {
+    alert("Veuillez indiquer une valeur positive");
+    return (quantityMin.value = 1);
+  } else {
+    productTuUpdate.quantity = event.target.valueAsNumber;
+    setProductLocalStorage(productsInCart);
+  }
+  displaysTotalPriceOfTheItems();
+  displaysTotalArticle();
 }
 
 //***************************--Formulaire--***************************//
-//Selectionne l'input du Dom  formulaire
-function selectInput() {
-  let inputForm = {
-    firstName: document.getElementById("firstName").value,
-    lastName: document.getElementById("lastName").value,
-    address: document.getElementById("address").value,
-    city: document.getElementById("city").value,
-    email: document.getElementById("email").value,
-  };
-  localStorage.setItem("contact", JSON.stringify(inputForm));
-  console.log(inputForm);
-}
-
 //Efface le message d'erreur si les valeurs sont remplie
 function deleteSendError() {
   //cible l'emplacement du message d'erreur
@@ -172,6 +152,7 @@ function deleteSendError() {
     }
   });
 }
+
 function checkFormValidity() {
   deleteSendError();
   //---------Les REGEX---------//
@@ -224,7 +205,7 @@ function checkFormValidity() {
     !hasErrorForCity &&
     !hasErrorForEmail
   ) {
-    const productIdUsers = getProductsInCart();
+    const productIdUsers = getProductLocalStorage();
     console.log(productIdUsers);
     if (productIdUsers.length != 0) {
       makeAndOrder();
@@ -241,10 +222,10 @@ function checkInputValidityAndDisplayErrorIfNeeded(
   errorMessage
 ) {
   const sendError = "Ceci est un message d'erreur";
-  if (inputToCheck.value == "") {
+  if (inputToCheck.value.trim() == "") {
     document.getElementById(selectorForErrorMessage).innerHTML = sendError;
     return true;
-  } else if (myRegex.test(inputToCheck.value) == false) {
+  } else if (myRegex.test(inputToCheck.value.trim()) == false) {
     document.getElementById(selectorForErrorMessage).innerHTML = errorMessage;
     return true;
   }
@@ -253,7 +234,7 @@ function checkInputValidityAndDisplayErrorIfNeeded(
 
 //récupere tout les id des produits dans le  local storage
 function productIdUsers() {
-  let produitStockerLocalStorage = getProductsInCart();
+  let produitStockerLocalStorage = getProductLocalStorage();
   //variables qui stocker les id recuperer dans le local storage
   const productOrderId = [];
   //boucle qui va recuperer tous les id dans le local storage
@@ -277,18 +258,19 @@ function infoUser() {
     },
     products: productOrderId,
   };
+  localStorage.setItem("userInfoCart", JSON.stringify(order));
   return order;
 }
-console.log(infoUser());
 
 //Listener qui va permettre d'envoyer le formulaire
 function listenerCart() {
-  const btn_Order = document.getElementById("order");
-  btn_Order.addEventListener("click", (e) => {
+  const selectBtnOrder = document.getElementById("order");
+  selectBtnOrder.addEventListener("click", (e) => {
     e.preventDefault();
     checkFormValidity();
   });
 }
+listenerCart();
 
 //Envoie les information a l'api et récupere l'id de la commande
 async function makeAndOrder() {
@@ -312,38 +294,8 @@ async function makeAndOrder() {
   console.log(commandeOrderId);
   confirmationOfOrder(commandeOrderId);
 }
+
 //envoi la confirmation de la commande et son numero
 function confirmationOfOrder(commandeOrderId) {
   window.location.href = "confirmation.html?id=" + `${commandeOrderId.orderId}`;
 }
-/* ******************************LOCAL STORAGE ET FORMULAIRE DEBUT****************************** */
-
-/* Contenu du localstorage dans les champs du formulaire pour que les champs restent remplis si on retourne a index.html */
-// function getInfoUserInForm() {
-//   return JSON.parse(localStorage.getItem("contact"));
-// }
-
-// /* remplir les champs avec les infos du localstorage si elles existent */
-// function fillInputLocalStorage(input) {
-//   const objetSauvegardeLocalStorage = getInfoUserInForm();
-//   document.querySelector(`#${input}`).value =
-//     objetSauvegardeLocalStorage[input];
-//   /* fonction pour trouver automatiquement la valeur de l'input dans le local storage puis le reassigner dans le champ */
-// }
-// function createFieldList() {
-//   let listeChamps = [
-//     "firstName",
-//     "lastName",
-//     "address",
-//     "city",
-//     "email",
-//   ]; /* on crée un une liste de champs */
-
-//   /* ici on utilise une boucle forEach pour ne pas avoir a répéter l'appel de la fonction 5 fois */
-//   listeChamps.forEach((champ) => {
-//     /* appliquer la fonction à la liste */
-//     fillInputLocalStorage(champ);
-//   }); /* fin du forEach */
-// }
-
-// createFieldList();
