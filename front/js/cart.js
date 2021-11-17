@@ -7,7 +7,7 @@ displayProducts(); // c'est l'appel à cette fonction qui va tout déclencher
 displaysTotalPriceOfTheItems();
 displaysTotalArticle();
 
-//=== Integration du bloc html et les valeurs du produits récupérer dans le local storage ===//
+//=== Intégration du bloc html et les valeurs du produits récupérer dans le local storage ===//
 function displayProduct(integrateProduct) {
   const selectedId = document.getElementById("cart__items");
   const createArticle = document.createElement("article");
@@ -48,7 +48,7 @@ function displayProduct(integrateProduct) {
   });
 }
 
-//=== Calcul le prix total de tout les articles ===//
+//=== Calcul le prix total de tout les articles présent dans le panier===//
 function displaysTotalPriceOfTheItems() {
   let productsStoreInLocalStorage = getProductLocalStorage();
   let totalPriceProducts = productsStoreInLocalStorage.reduce(
@@ -60,7 +60,7 @@ function displaysTotalPriceOfTheItems() {
   //- Affiche le prix total de tout les articles
   document.querySelector("#totalPrice").innerHTML = totalPriceProducts;
 }
-//=== Calcul le nombre total des articles ===//
+//=== Calcul le nombre total de tout les articles présent dans le panier ===//
 function displaysTotalArticle() {
   let productsStoreInLocalStorage = getProductLocalStorage();
   let totalItemProducts = productsStoreInLocalStorage.reduce(
@@ -77,7 +77,7 @@ function displaysTotalArticle() {
 function displayProducts() {
   let productsInCart = getProductLocalStorage();
   if (productsInCart != null) {
-    //Va trier les produit par leur id
+    //- Va trier les produit par leur id
     productsInCart = productsInCart.sort(function (a, b) {
       return a.idProduit.localeCompare(b.idProduit);
     });
@@ -87,7 +87,7 @@ function displayProducts() {
   }
 }
 
-//=== Permet de supprimer un produit individuelement et le supprime dans le local storage ===//
+//=== Permet de supprimer un produit individuelement dans la page panier et le supprime aussi du local storage ===//
 function deleteItem(event) {
   event.preventDefault();
   //- Suppression de l'élément dans le dom
@@ -112,7 +112,7 @@ function deleteItem(event) {
 //=== Permet de modifie la quantité du produit et enregistre la modification dans le local storage ===//
 function changeTheQuantityOfTheProduct(event) {
   event.preventDefault();
-  //- Récuperer l'id et la couleur du produit a modifier
+  //- Récupèrer l'id et la couleur du produit à modifier
   const productToModifQuantity = event.target.closest(".cart__item");
   console.log(productToModifQuantity);
   const productToModifId = productToModifQuantity.dataset.id;
@@ -232,12 +232,12 @@ function checkInputValidityAndDisplayErrorIfNeeded(
   return false;
 }
 
-//=== Récupere tout les id des produits stocker dans le  local storage ===//
+//=== Récupère tout les id des produits stocker dans le  local storage ===//
 function productIdUsers() {
   let produitStockerLocalStorage = getProductLocalStorage();
-  //- Variables qui stocker les id recuperer dans le local storage
+  //- Variables qui stocker les id récupérer dans le local storage
   const productOrderId = [];
-  //- Boucle qui va recuperer tous les id dans le local storage
+  //- Boucle qui va récupérer tous les id dans le local storage
   produitStockerLocalStorage.forEach((productOrder) => {
     productOrderId.push(productOrder.idProduit);
   });
@@ -245,7 +245,7 @@ function productIdUsers() {
 }
 console.log(productIdUsers());
 
-//=== Récupere les informations de l'utilisateur ainsi que son panier et va les stocker dans le local storage ===//
+//=== Récupère les informations de l'utilisateur ainsi que son panier et va les stocker dans le local storage ===//
 function infoUser() {
   const productOrderId = productIdUsers();
   var order = {
@@ -289,7 +289,7 @@ async function makeAndOrder() {
     post
   );
   console.log(response);
-  //- Reponse de l'Api
+  //- Récupere la réponse avec le numéro de la commande 
   var commandeOrderId = await response.json();
 
   confirmationOfOrder(commandeOrderId);

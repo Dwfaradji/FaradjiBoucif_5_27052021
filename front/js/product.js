@@ -2,11 +2,11 @@
 import { setProductLocalStorage } from "/front/js/fonction.js";
 import { getProductLocalStorage } from "/front/js/fonction.js";
 
-//- Récuperation de la chaine de requete dans l'url
+//- Récupération de la chaine de requète dans l'url
 const url_id = window.location.search;
 //- Extraction de l'Id
 const urlSearchParams = new URLSearchParams(url_id);
-//- Récupere l'id du produit
+//- Récupère l'id du produit
 const idParams = urlSearchParams.get("id");
 
 const quantityValue = document.getElementById("quantity");
@@ -19,13 +19,13 @@ listenerAddToCart();
 displayProductPage(addProductApi);
 displayColors(addProductApi);
 
-//=== Recupere l'id du produit a afficher ===//
+//=== Récupère l'id du produit à afficher ===//
 async function loadingDataApi() {
   try {
-    //- Appel API grace a l'Id du produits
+    //- Appel API grâce a l'Id du produits
     const response = await fetch(`${urlApi}products/${idParams}`);
     console.log(response);
-    //- Reponse de l'Api
+    //- Réponse de l'Api
     const arrayProduct = await response.json();
     console.log(arrayProduct);
     return arrayProduct;
@@ -44,7 +44,7 @@ function displayProductPage(selectedProduct) {
     selectedProduct.description;
 }
 
-//=== Afficher les couleur disponible du produit ===//
+//=== Afficher les couleurs disponible du produit ===//
 function displayColors(product) {
   const colorsOfTheProduct = product.colors;
   colorsOfTheProduct.forEach((colorsProduct) => {
@@ -56,7 +56,7 @@ function displayColors(product) {
   });
 }
 
-//=== Récupere les information du produits saisie par l'utilisateur ===//
+//=== Récupère les information du produits saisie par l'utilisateur ===//
 function usersProductChoice() {
   const userChoice = {
     name: document.getElementById("title").innerHTML,

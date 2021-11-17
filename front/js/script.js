@@ -5,7 +5,7 @@ const productsToLoad = await loadingProductApi();
 
 displayProductsHome();
 
-//=== Construction html et integration des produits ===//
+//=== Construction html et intégration des produits ===//
 function displayProductHome(product) {
   const selectIdItem = document.getElementById("items");
   const createHref = document.createElement("a");
