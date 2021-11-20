@@ -1,12 +1,12 @@
 //=== Envoi les information dans le local storage ===//
 export function setProductLocalStorage(productsStoreInLocalStorage) {
   return localStorage.setItem(
-    "produits",
+    "products",
     JSON.stringify(productsStoreInLocalStorage)
   );
 }
 
 //=== Récupere les informations dans le local storage ===//
-export function getProductLocalStorage() {
-  return JSON.parse(localStorage.getItem("produits"));
+export function getProductsInLocalStorage() {
+  return JSON.parse(localStorage.getItem("products"));
 }

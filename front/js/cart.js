@@ -1,9 +1,10 @@
 "use strict";
 
+import { urlApi } from "/front/js/urlApi.js";
 import { setProductLocalStorage } from "/front/js/fonction.js";
-import { getProductLocalStorage } from "/front/js/fonction.js";
+import { getProductsInLocalStorage } from "/front/js/fonction.js";
 
-displayProducts(); // c'est l'appel à cette fonction qui va tout déclencher
+displayProducts();
 displaysTotalPriceOfTheItems();
 displaysTotalArticle();
 
@@ -18,21 +19,21 @@ function displayProduct(integrateProduct) {
   createArticle.innerHTML = `<div class="cart__item__img"> 
     <img src="${integrateProduct.image}"alt="${integrateProduct.altTxt}"> 
     </div>   
-    <div class="cart__item__content"> 
-    <div class="cart__item__content__titlePrice"> 
-    <h2>${integrateProduct.name}</h2>
-    <span><strong>${integrateProduct.color}</strong></span> 
-    <p>${integrateProduct.price} € </p> 
-    </div>
-    <div class="cart__item__content__settings"> 
-    <div class="cart__item__content__settings__quantity"> 
-    <p>Qté : </p> 
-    <input type="number" class="itemQuantity" name="itemQuantity" min=1 max=100 value= 
-    "${integrateProduct.quantity}" data-id="${integrateProduct.idProduit}"> 
-    </div> 
-    <div class="cart__item__content__settings__delete"> 
-    <p class="deleteItem">Supprimer</p> </div> 
-    </div> 
+      <div class="cart__item__content"> 
+        <div class="cart__item__content__titlePrice"> 
+          <h2>${integrateProduct.name}</h2>
+          <span><strong>${integrateProduct.color}</strong></span> 
+          <p>${integrateProduct.price} € </p> 
+        </div>
+        <div class="cart__item__content__settings"> 
+          <div class="cart__item__content__settings__quantity"> 
+          <p>Qté : </p> 
+          <input type="number" class="itemQuantity" name="itemQuantity" min=1 max=100 value="${integrateProduct.quantity}" data-id="${integrateProduct.idProduit}"> 
+        </div> 
+        <div class="cart__item__content__settings__delete"> 
+          <p class="deleteItem">Supprimer</p> 
+        </div> 
+      </div> 
     </article>`;
 
   //- Listeners liens de suppression (on les met seulement apres construction de l'html)
@@ -50,7 +51,7 @@ function displayProduct(integrateProduct) {
 
 //=== Calcul le prix total de tout les articles présent dans le panier===//
 function displaysTotalPriceOfTheItems() {
-  let productsStoreInLocalStorage = getProductLocalStorage();
+  let productsStoreInLocalStorage = getProductsInLocalStorage();
   let totalPriceProducts = productsStoreInLocalStorage.reduce(
     (totalPrice, products) => {
       return totalPrice + products.quantity * products.price;
@@ -62,7 +63,7 @@ function displaysTotalPriceOfTheItems() {
 }
 //=== Calcul le nombre total de tout les articles présent dans le panier ===//
 function displaysTotalArticle() {
-  let productsStoreInLocalStorage = getProductLocalStorage();
+  let productsStoreInLocalStorage = getProductsInLocalStorage();
   let totalItemProducts = productsStoreInLocalStorage.reduce(
     (totalItems, items) => {
       return totalItems + items.quantity;
@@ -75,7 +76,7 @@ function displaysTotalArticle() {
 
 //=== Afficher les produits enregistrer sur le local storage dans le panier ===//
 function displayProducts() {
-  let productsInCart = getProductLocalStorage();
+  let productsInCart = getProductsInLocalStorage();
   if (productsInCart != null) {
     //- Va trier les produit par leur id
     productsInCart = productsInCart.sort(function (a, b) {
@@ -96,7 +97,7 @@ function deleteItem(event) {
   const colorProductTodelete = productToDelete.dataset.color;
   productToDelete.remove();
   //- Suppression de l'élément dans le local storage : tableau filtré sans l'élément supprimé
-  let productsInCart = getProductLocalStorage();
+  let productsInCart = getProductsInLocalStorage();
   productsInCart = productsInCart.filter(
     (productLocalStorage) =>
       productLocalStorage.idProduit !== idProductToDelete ||
@@ -114,11 +115,10 @@ function changeTheQuantityOfTheProduct(event) {
   event.preventDefault();
   //- Récupèrer l'id et la couleur du produit à modifier
   const productToModifQuantity = event.target.closest(".cart__item");
-  console.log(productToModifQuantity);
   const productToModifId = productToModifQuantity.dataset.id;
   const productToModifColor = productToModifQuantity.dataset.color;
   //- Modifie la quantité dans le local storage
-  const productsInCart = getProductLocalStorage();
+  const productsInCart = getProductsInLocalStorage();
   const productTuUpdate = productsInCart.find(
     (product) =>
       product.idProduit === productToModifId &&
@@ -205,8 +205,7 @@ function checkFormValidity() {
     !hasErrorForCity &&
     !hasErrorForEmail
   ) {
-    const productIdUsers = getProductLocalStorage();
-    console.log(productIdUsers);
+    const productIdUsers = getProductsInLocalStorage();
     if (productIdUsers.length != 0) {
       makeAndOrder();
     } else {
@@ -221,7 +220,7 @@ function checkInputValidityAndDisplayErrorIfNeeded(
   selectorForErrorMessage,
   errorMessage
 ) {
-  const sendError = "Ceci est un message d'erreur";
+  const sendError = " Merci de remplir tout les champs du formulaire";
   if (inputToCheck.value.trim() == "") {
     document.getElementById(selectorForErrorMessage).innerHTML = sendError;
     return true;
@@ -234,7 +233,7 @@ function checkInputValidityAndDisplayErrorIfNeeded(
 
 //=== Récupère tout les id des produits stocker dans le  local storage ===//
 function productIdUsers() {
-  let produitStockerLocalStorage = getProductLocalStorage();
+  let produitStockerLocalStorage = getProductsInLocalStorage();
   //- Variables qui stocker les id récupérer dans le local storage
   const productOrderId = [];
   //- Boucle qui va récupérer tous les id dans le local storage
@@ -243,7 +242,6 @@ function productIdUsers() {
   });
   return productOrderId;
 }
-console.log(productIdUsers());
 
 //=== Récupère les informations de l'utilisateur ainsi que son panier et va les stocker dans le local storage ===//
 function infoUser() {
@@ -282,20 +280,14 @@ async function makeAndOrder() {
     body: JSON.stringify(order),
     headers: { "Content-Type": "application/json" },
   };
-  console.log(post);
   //- Appel de l'api
-  const response = await fetch(
-    "http://localhost:3000/api/products/order",
-    post
-  );
-  console.log(response);
-  //- Récupere la réponse avec le numéro de la commande 
+  const response = await fetch(`${urlApi}products/order`, post);
+  //- Récupere la réponse avec le numéro de la commande
   var commandeOrderId = await response.json();
-
   confirmationOfOrder(commandeOrderId);
 }
 
 //=== Envoi la confirmation de la commande ===//
 function confirmationOfOrder(commandeOrderId) {
-  window.location.href = "confirmation.html?id=" + `${commandeOrderId.orderId}`;
+  window.location.href = `confirmation.html?id=${commandeOrderId.orderId}`;
 }
