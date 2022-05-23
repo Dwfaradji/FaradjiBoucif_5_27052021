@@ -2,7 +2,7 @@
   "name": "faradjiboucif_5_27052021",
   "version": "1.0.0",
   "description": "1 Ouvrez le terminal  2 Aller sur le dossier back  3 Cd back  4 Executer la commande nodemon server",
-  "main": "index.html",
+  "main": "front/html/index.html",
   "scripts": {
     "start": "node back/server.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
