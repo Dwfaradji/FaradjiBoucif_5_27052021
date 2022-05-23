@@ -1,16 +1,23 @@
 {
-  "name": "kanap-backend",
+  "name": "faradjiboucif_5_27052021",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "1 Ouvrez le terminal  2 Aller sur le dossier back  3 Cd back  4 Executer la commande nodemon server",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dwfaradji/FaradjiBoucif_5_27052021.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dwfaradji/FaradjiBoucif_5_27052021/issues"
+  },
+  "homepage": "https://github.com/Dwfaradji/FaradjiBoucif_5_27052021#readme",
   "dependencies": {
-    "express": "^4.16.4",
-    "uuid": "^3.3.2"
+    "express": "^4.18.1"
   },
   "engines": {
     "node": "16.x"
