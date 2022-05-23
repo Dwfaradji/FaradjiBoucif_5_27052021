@@ -4,6 +4,7 @@
   "description": "1 Ouvrez le terminal  2 Aller sur le dossier back  3 Cd back  4 Executer la commande nodemon server",
   "main": "index.html",
   "scripts": {
+    "start":"npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
